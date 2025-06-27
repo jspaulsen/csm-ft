@@ -60,7 +60,7 @@ def main(
     # Suzy Dataset
     glimpsed = load_dataset(
         "audiofolder",
-        data_dir="../dataset-redux/alt_dataset/glimpsed/normalized",
+        data_dir="../dataset-redux/dataset/glimpsed",
         split="train",
     )
 
@@ -80,17 +80,19 @@ def main(
     # dataset = concatenate_datasets([glimpsed, defiant, valk])
     dataset = glimpsed
 
+    # NOTE: This will filter out your entire dataset if you don't have the columns
     # filter out nisqa_mos	nisqa_noisiness	nisqa_discontinuity	nisqa_coloration if < 3.5
     # file_name,text,length_ms,p808_mos,mos_sig,mos_bak,mos_ovr,nisqa_mos,nisqa_noisiness,nisqa_discontinuity,nisqa_coloration,nisqa_loudness,ce,cu,pc,pq,sr_score,sr_prediction
-    dataset = dataset.filter(lambda x: x["nisqa_mos"] >= 3.5)
-    dataset = dataset.filter(lambda x: x["nisqa_noisiness"] >= 3.8)
-    dataset = dataset.filter(lambda x: x["nisqa_discontinuity"] >= 3.5)
-    dataset = dataset.filter(lambda x: x["nisqa_coloration"] >= 3.0)
+    dataset = dataset.filter(lambda x: x["nisqa_mos"] is not None and x["nisqa_mos"] >= 3.5)
+    dataset = dataset.filter(lambda x: x["nisqa_noisiness"] is not None and x["nisqa_noisiness"] >= 3.8)
+    dataset = dataset.filter(lambda x: x["nisqa_discontinuity"] is not None and x["nisqa_discontinuity"] >= 3.5)
+    dataset = dataset.filter(lambda x: x["nisqa_coloration"] is not None and x["nisqa_coloration"] >= 3.0)
 
     # filter out any samples that have a sr_prediction of "False"
     dataset = dataset.filter(lambda x: x["sr_prediction"] == True)
 
 
+    # General filters
     # Filter anything larger than 30 seconds and smaller than 1 second
     dataset = dataset.filter(lambda x: len(x["audio"]["array"]) / x["audio"]["sampling_rate"] <= 30.0)
     dataset = dataset.filter(lambda x: len(x["audio"]["array"]) / x["audio"]["sampling_rate"] >= 1.2)
