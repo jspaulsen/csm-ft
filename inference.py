@@ -75,20 +75,15 @@ def generate_audio(
         top_k=50,
         top_p=1.0,
         #########################################################
-        # output_audio=True
+        output_audio=True
     )
 
-    # need to multiple by 32768 to get the correct amplitude
-    # audio_values[0] = audio_values * 32768.0
-    audio_values = audio_values[0].to(torch.float32).cpu().numpy()
-    return audio_values
-
-    # return (
-    #     audio_values[0]
-    #         .to(torch.float32)
-    #         .cpu()
-    #         .numpy()
-    # )
+    return (
+        audio_values[0]
+            .to(torch.float32)
+            .cpu()
+            .numpy()
+    )
 
 
 def main(
